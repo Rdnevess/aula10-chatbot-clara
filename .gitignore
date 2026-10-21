@@ -1,0 +1,7 @@
+.env
+.venv/
+__pycache__/
+
+# Material da disciplina (não versionado)
+Aula-10-ChatBot-Multiagente-n8n.pdf
+aula10-chatbot.zip
