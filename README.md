@@ -20,6 +20,8 @@ Os modelos de linguagem rodam no Groq: `openai/gpt-oss-120b` na CLARA e `openai/
 | Tabela de testes | [`testes.md`](testes.md): os 8 cenários da seção 6.2, com a resposta e o sub-agente acionado em cada um |
 | Link do Git | este repositório; o endereço vai no zip de entrega em [`LINK-GIT.txt`](LINK-GIT.txt) |
 
+**Pacote de entrega:** o `entrega-aula10.zip` (workflows, `testes.md` e `LINK-GIT.txt`) está na release [Entrega Aula 10](https://github.com/Rdnevess/aula10-chatbot-clara/releases/tag/entrega-aula10). Também dá para [baixar o zip direto](https://github.com/Rdnevess/aula10-chatbot-clara/releases/download/entrega-aula10/entrega-aula10.zip).
+
 **Resultado dos testes:** os 8 cenários passaram (10 de 10 mensagens), sem ajuste de prompt. Os dados brutos, com o ID de cada execução, estão em [`testes/resultados.json`](testes/resultados.json).
 
 ## Os dois workflows
