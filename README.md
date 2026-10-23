@@ -18,7 +18,7 @@ Os modelos de linguagem rodam no Groq: `openai/gpt-oss-120b` na CLARA e `openai/
 | --- | --- |
 | Workflows exportados | [`workflows/ingestao-convenios.json`](workflows/ingestao-convenios.json) e [`workflows/clara-multiagente.json`](workflows/clara-multiagente.json) |
 | Tabela de testes | [`testes.md`](testes.md): os 8 cenários da seção 6.2, com a resposta e o sub-agente acionado em cada um |
-| Link do Git | este repositório |
+| Link do Git | este repositório; o endereço vai no zip de entrega em [`LINK-GIT.txt`](LINK-GIT.txt) |
 
 **Resultado dos testes:** os 8 cenários passaram (10 de 10 mensagens), sem ajuste de prompt. Os dados brutos, com o ID de cada execução, estão em [`testes/resultados.json`](testes/resultados.json).
 

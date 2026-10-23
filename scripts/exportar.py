@@ -1,4 +1,7 @@
-"""Desliga o chat público, exporta os dois workflows para workflows/ e gera o .zip de entrega."""
+"""Desliga o chat público, exporta os dois workflows para workflows/ e gera o .zip de entrega.
+
+Só o pacote, sem exportar de novo: python -c "from scripts.exportar import gerar_zip; gerar_zip()"
+"""
 import json
 import re
 import zipfile
@@ -31,10 +34,15 @@ def main():
         destino = RAIZ / "workflows" / arquivo
         destino.write_text(json.dumps(wf, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         print(f"{nome} -> {destino.relative_to(RAIZ)}")
+    gerar_zip()
+
+
+def gerar_zip():
     with zipfile.ZipFile(ZIP, "w", zipfile.ZIP_DEFLATED) as pacote:
         for arquivo in ARQUIVOS.values():
             pacote.write(RAIZ / "workflows" / arquivo, f"workflows/{arquivo}")
         pacote.write(RAIZ / "testes.md", "testes.md")
+        pacote.write(RAIZ / "LINK-GIT.txt", "LINK-GIT.txt")
     print(f"pacote: {ZIP.name}")
 
 
