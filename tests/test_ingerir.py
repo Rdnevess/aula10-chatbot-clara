@@ -1,6 +1,6 @@
 import unittest
 
-from scripts.ingerir import montar_multipart, nome_campo_arquivo
+from scripts.ingerir import montar_multipart, nome_campo_arquivo, url_status
 
 
 class IngerirTest(unittest.TestCase):
@@ -29,6 +29,12 @@ placeholder=""
             b'--LIM\r\nContent-Disposition: form-data; name="field-0"; filename="a.pdf"\r\n'
             b"Content-Type: application/pdf\r\n\r\n%PDF-1\r\n--LIM--\r\n"
         ))
+
+    def test_url_status(self):
+        self.assertEqual(
+            url_status("http://localhost:5678/form-waiting/11?signature=abc"),
+            "http://localhost:5678/form-waiting/11/n8n-execution-status?signature=abc",
+        )
 
 
 if __name__ == "__main__":

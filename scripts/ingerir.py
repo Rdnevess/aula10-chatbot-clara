@@ -1,5 +1,8 @@
 """Envia os PDFs de convenios/ ao formulário publicado e confere a execução (seção 4.7)."""
+import json
 import re
+import time
+import urllib.parse
 import urllib.request
 import uuid
 
@@ -29,6 +32,13 @@ def montar_multipart(campo, arquivos, limite):
     return b"".join(partes) + f"--{limite}--\r\n".encode("utf-8")
 
 
+def url_status(form_waiting_url):
+    """URL de status do formulário multi-etapas: mesmo caminho + /n8n-execution-status, com a mesma query (signature)."""
+    partes = urllib.parse.urlsplit(form_waiting_url)
+    caminho = partes.path + "/n8n-execution-status"
+    return urllib.parse.urlunsplit((partes.scheme, partes.netloc, caminho, partes.query, partes.fragment))
+
+
 def main():
     workflow_id = buscar_workflow(wf_ingestao.NOME)["id"]
     antes = ultimo_id(workflow_id)
@@ -40,7 +50,35 @@ def main():
     requisicao = urllib.request.Request(URL_FORM, data=corpo, method="POST",
                                         headers={"Content-Type": f"multipart/form-data; boundary={limite}"})
     with urllib.request.urlopen(requisicao, timeout=120) as resposta:
+        corpo_resposta = resposta.read()
         print(f"POST {URL_FORM} -> {resposta.status}")
+    try:
+        dados_resposta = json.loads(corpo_resposta)
+    except ValueError:
+        dados_resposta = None
+    if dados_resposta and dados_resposta.get("formWaitingUrl"):
+        form_waiting_url = dados_resposta["formWaitingUrl"]
+        fim = time.time() + 120
+        situacao = ""
+        while time.time() < fim and situacao not in ("form-waiting", "success"):
+            with urllib.request.urlopen(url_status(form_waiting_url), timeout=30) as resposta:
+                situacao = resposta.read().decode("utf-8").strip()
+            if situacao not in ("form-waiting", "success"):
+                time.sleep(1)
+        if situacao == "form-waiting":
+            with urllib.request.urlopen(form_waiting_url, timeout=30) as resposta:
+                pagina_final = resposta.read().decode("utf-8")
+            if "indexado(s)" in pagina_final:
+                achado = re.search(r"\d+ arquivo\(s\) indexado\(s\) em \d+ trecho\(s\)\.", pagina_final)
+                if achado:
+                    print(achado.group(0))
+            # O GET só busca a página; o cliente real do formulário, já carregado nela,
+            # dispara um POST vazio para a mesma URL (com a assinatura), e é esse POST
+            # que de fato libera o nó em espera (confirmado via API: sem ele a execução
+            # fica em "waiting" mesmo após o GET).
+            urllib.request.urlopen(
+                urllib.request.Request(form_waiting_url, data=b"", method="POST"), timeout=30
+            ).close()
     execucao = esperar_execucao(workflow_id, antes)
     arquivos = itens_saida(execucao, "Um item por arquivo")
     trechos = itens_saida(execucao, "Inserir na base")
