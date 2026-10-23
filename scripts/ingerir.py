@@ -13,8 +13,8 @@ URL_FORM = f"{BASE_URL}/form/base-convenios"
 
 def nome_campo_arquivo(html):
     for tag in re.findall(r"<input\b[^>]*>", html):
-        if re.search(r'type="file"', tag):
-            return re.search(r'name="([^"]+)"', tag).group(1)
+        if re.search(r"type=['\"]file['\"]", tag):
+            return re.search(r"name=['\"]([^'\"]+)['\"]", tag).group(1)
     raise ValueError("o formulário não tem campo de arquivo")
 
 

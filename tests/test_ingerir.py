@@ -11,6 +11,18 @@ class IngerirTest(unittest.TestCase):
     def test_nome_do_campo_com_name_antes_do_type(self):
         self.assertEqual(nome_campo_arquivo('<input name="documentos" type="file">'), "documentos")
 
+    def test_nome_do_campo_com_aspas_simples_multilinhas(self):
+        html = """<input
+class='form-input form-required'
+type='file'
+id='field-0'
+name='field-0'
+accept='.pdf'
+multiple
+placeholder=""
+/>"""
+        self.assertEqual(nome_campo_arquivo(html), "field-0")
+
     def test_multipart(self):
         corpo = montar_multipart("field-0", [("a.pdf", b"%PDF-1")], "LIM")
         self.assertEqual(corpo, (
